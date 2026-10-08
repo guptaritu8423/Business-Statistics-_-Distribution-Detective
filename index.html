@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distribution Detective — Instructor: Prof. Ritu Gupta</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a18;font-size:15px;min-height:100vh;}
+.page{max-width:860px;margin:0 auto;padding:2rem 1.25rem;}
+.sc{display:none;}.sc.on{display:block;}
+.slbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:8px;}
+.card{background:#fff;border:1px solid #e8e8e4;border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:.85rem;}
+
+/* Setup */
+.setup-hd{text-align:center;padding:2rem 0 1.5rem;}
+.setup-hd h1{font-size:28px;font-weight:600;margin-bottom:6px;color:#1a1a18;}
+.setup-hd p{font-size:14px;color:#888;}
+.logo-strip{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px;}
+.logo-icon{width:44px;height:44px;border-radius:12px;background:#1a56d6;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;}
+.sec{margin-bottom:1.25rem;}
+.pills{display:flex;gap:8px;flex-wrap:wrap;}
+.pill{padding:7px 18px;border-radius:20px;border:1px solid #ddd;background:#fff;color:#444;cursor:pointer;font-size:13px;font-weight:500;transition:all .12s;}
+.pill:hover{border-color:#1a56d6;color:#1a56d6;}
+.pill.on{background:#1a56d6;color:#fff;border-color:#1a56d6;}
+.name-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.name-grid input{padding:9px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;transition:border .12s;}
+.name-grid input:focus{border-color:#1a56d6;}
+.go-btn{width:100%;padding:14px;border-radius:10px;border:none;background:#1a56d6;color:#fff;cursor:pointer;font-size:16px;font-weight:600;margin-top:.5rem;letter-spacing:0.01em;transition:opacity .12s;}
+.go-btn:hover{opacity:.88;}
+.info-note{background:#f0f4ff;border-radius:8px;padding:.65rem 1rem;font-size:12px;color:#555;line-height:1.6;margin-bottom:.85rem;}
+
+/* Game bar */
+.gbar{display:flex;align-items:center;justify-content:space-between;padding:10px 0 12px;border-bottom:1px solid #eee;margin-bottom:.85rem;}
+.rpill{font-size:12px;padding:4px 14px;border-radius:20px;background:#e8f0fe;color:#1a56d6;font-weight:600;}
+.gbar-title{font-size:13px;color:#888;font-weight:500;}
+.tbox{text-align:right;}
+.tv{font-size:36px;font-weight:700;font-family:'Courier New',monospace;line-height:1;}
+.tg{color:#059669;}.ta{color:#d97706;}.tr{color:#dc2626;}
+.tbox small{font-size:11px;color:#888;}
+
+/* Score strip */
+.sstrip{display:flex;gap:7px;flex-wrap:wrap;background:#f5f5f0;border-radius:10px;padding:8px;margin-bottom:.85rem;}
+.ms{flex:1;min-width:75px;background:#fff;border:1px solid #e8e8e4;border-radius:8px;padding:6px 7px;text-align:center;}
+.ms-n{font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ms-v{font-size:18px;font-weight:700;}
+.ms-v.top{color:#059669;}
+
+/* Context */
+.ctx{font-size:18px;line-height:1.65;color:#555;border-left:3px solid #1a56d6;padding:.65rem .9rem;background:#f7f9ff;margin-bottom:.75rem;}
+.hist{position:relative;width:100%;height:260px;margin-bottom:.85rem;}
+
+/* Clue buttons */
+.clue-btns{display:flex;gap:8px;margin-bottom:8px;}
+.cb{flex:1;padding:9px;border-radius:8px;border:1px solid #d97706;background:#fff;color:#d97706;cursor:pointer;font-size:14px;font-weight:600;transition:all .1s;}
+.cb:hover:not([disabled]){background:#fef3c7;border-color:#d97706;}
+.cb.used{background:#fef3c7;border-color:#d97706;cursor:default;opacity:.8;}
+.cb[disabled]:not(.used){opacity:.35;cursor:default;pointer-events:none;}
+.cs{background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:9px 12px;font-size:16px;line-height:1.55;margin-bottom:5px;display:flex;gap:7px;color:#92400e;}
+.cn{font-weight:700;flex-shrink:0;}
+.maxrow{font-size:14px;color:#888;text-align:right;margin-bottom:.65rem;}
+.maxrow b{font-weight:700;color:#1a1a18;}
+
+/* Divider */
+.div{border:none;border-top:1px solid #eee;margin:.65rem 0;}
+
+/* Team answer rows */
+.tanslbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:8px;}
+.trow{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid #f0f0ea;}
+.trow:last-child{border-bottom:none;}
+.tn{font-size:16px;font-weight:600;min-width:90px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dbs{display:flex;gap:4px;flex:1;}
+.db{flex:1;padding:10px 4px;border-radius:6px;border:1px solid #e0e0e0;background:#fafafa;color:#555;cursor:pointer;font-size:15px;font-weight:600;text-align:center;transition:all .1s;line-height:1.3;}
+.db:hover:not(.dim){background:#f0f4ff;color:#1a56d6;border-color:#1a56d6;}
+.db.sel{background:#1a56d6;color:#fff;border-color:#1a56d6;}
+.db.dim{opacity:.25;pointer-events:none;}
+.lktag{font-size:11px;padding:3px 9px;border-radius:20px;background:#d1fae5;color:#059669;white-space:nowrap;flex-shrink:0;font-weight:600;}
+.end-btn{width:100%;padding:13px;border-radius:10px;border:none;background:#1a56d6;color:#fff;cursor:pointer;font-size:15px;font-weight:600;margin-top:.85rem;transition:opacity .12s;}
+.end-btn:hover{opacity:.9;}
+
+/* Result */
+.ans-c{text-align:center;padding:1rem 0 1.1rem;}
+.ans-lbl{font-size:13px;color:#888;margin-bottom:5px;}
+.ans-name{font-size:34px;font-weight:700;color:#059669;margin-bottom:3px;}
+.rclue{display:flex;gap:8px;font-size:16px;line-height:1.55;padding:7px 0;border-bottom:1px solid #f0f0ea;}
+.rclue:last-child{border-bottom:none;}
+.rdot{width:7px;height:7px;border-radius:50%;background:#059669;margin-top:5px;flex-shrink:0;}
+.rexpl{background:#f7f9ff;border:1px solid #e0eaff;border-radius:10px;padding:.85rem 1rem;font-size:17px;line-height:1.7;margin:.85rem 0;}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:8px;margin-bottom:.85rem;}
+.rcard{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:.85rem;text-align:center;}
+.rcard.ok{border-color:#059669;border-width:2px;}
+.rcard.fail{opacity:.6;}
+.rc-nm{font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rc-ans{font-size:15px;font-weight:600;margin:3px 0;}
+.rc-pt{font-size:22px;font-weight:700;}
+.rc-pt.g{color:#059669;}
+.rc-tot{font-size:11px;color:#888;}
+.next-btn{width:100%;padding:13px;border-radius:10px;border:none;background:#1a56d6;color:#fff;cursor:pointer;font-size:15px;font-weight:600;transition:opacity .12s;}
+.next-btn:hover{opacity:.9;}
+
+/* Final */
+.final-hd{text-align:center;padding:2rem 0 1.5rem;}
+.final-hd h1{font-size:28px;font-weight:700;margin-bottom:6px;}
+.winner-txt{font-size:15px;color:#555;}
+.trophy{width:60px;height:60px;border-radius:50%;background:#fef3c7;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 1rem;}
+.lbt{width:100%;border-collapse:collapse;margin-bottom:1.5rem;}
+.lbt th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#888;padding:8px;border-bottom:1px solid #e8e8e4;text-align:left;}
+.lbt td{padding:10px 8px;border-bottom:1px solid #f0f0ea;font-size:15px;}
+.lbt tr:last-child td{border-bottom:none;}
+.lbt tr.first td{font-weight:700;}
+.r1{color:#d97706;font-weight:700;font-size:16px;}
+.r2{color:#888;}
+.replay-btn{width:100%;padding:12px;border-radius:10px;border:1px solid #ddd;background:#fff;color:#444;cursor:pointer;font-size:15px;font-weight:500;}
+.replay-btn:hover{background:#f5f5f0;}
+.qline{font-size:20px;font-weight:600;color:#1a1a18;margin-top:.55rem;line-height:1.5;}
+.tagb{display:inline-block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:20px;background:#e8f0fe;color:#1a56d6;margin-bottom:.5rem;}
+.pill-sm{font-size:14px;}
+.solo-in{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:15px;outline:none;}
+.solo-in:focus{border-color:#1a56d6;}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.5rem;}
+.stat{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:1rem;text-align:center;}
+.stat b{display:block;font-size:28px;color:#1a56d6;}
+.stat span{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:.06em;}
+@media(max-width:620px){.trow{flex-wrap:wrap}.tn{max-width:none;min-width:100%}.ctx{font-size:16px}.qline{font-size:18px}}
+.sd-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;}
+.mem-row{display:flex;gap:8px;align-items:center;margin-top:8px;}
+.mem-row label{font-size:14px;font-weight:600;min-width:90px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mem-row input{flex:1;}
+.err{color:#dc2626;font-size:13px;margin-top:6px;display:none;}
+.part{background:#fff;border:2px solid #1a56d6;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;}
+.part h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#1a56d6;margin-bottom:8px;}
+.part .row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid #f0f0ea;font-size:17px;}
+.part .row:last-child{border-bottom:none}
+.part .row span{color:#888;font-size:14px;align-self:center}
+.part .row b{text-align:right}
+.memtxt{font-size:13px;color:#888;font-weight:400;}
+@media(max-width:620px){.sd-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="sc on" id="scS">
+  <div class="setup-hd">
+    <div class="logo-strip">
+      <div class="logo-icon"><i class="ti ti-chart-histogram" aria-hidden="true"></i></div>
+    </div>
+    <h1>Distribution detective</h1>
+    <p>Business Statistics · Instructor: Prof. Ritu Gupta · TAPMI · <span id="nRounds">30</span> rounds</p>
+  </div>
+  <div class="sec">
+    <div class="slbl">Game mode</div>
+    <div class="pills" id="mPills">
+      <button class="pill on" data-m="team">Team mode</button>
+      <button class="pill" data-m="solo">Solo mode</button>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="slbl">Question set</div>
+    <div class="pills" id="qPills">
+      <button class="pill" data-q="id">Identify distribution (15)</button>
+      <button class="pill" data-q="prob">Probability problems (15)</button>
+      <button class="pill on" data-q="all">All rounds (30)</button>
+    </div>
+  </div>
+  <div class="sec" id="secCount">
+    <div class="slbl">Number of teams</div>
+    <div class="pills" id="cPills">
+      <button class="pill" data-n="2">2 teams</button>
+      <button class="pill on" data-n="3">3 teams</button>
+      <button class="pill" data-n="4">4 teams</button>
+      <button class="pill" data-n="5">5 teams</button>
+      <button class="pill" data-n="6">6 teams</button>
+    </div>
+  </div>
+  <div class="sec" id="secSolo" style="display:none;">
+    <div class="slbl">Student details</div>
+    <div class="sd-grid">
+      <input type="text" class="solo-in" id="soloName" placeholder="Student name" maxlength="40">
+      <input type="text" class="solo-in" id="soloRoll" placeholder="Roll No." maxlength="20">
+      <input type="text" class="solo-in" id="soloBatch" placeholder="Batch" maxlength="20">
+    </div>
+  </div>
+  <div class="sec" id="secNames">
+    <div class="slbl">Team names</div>
+    <div class="name-grid" id="nGrid"></div>
+    <div class="slbl" style="margin-top:14px;">Team members (Student name &amp; Roll No.)</div>
+    <div id="mGrid"></div>
+    <div class="slbl" style="margin-top:14px;">Batch</div>
+    <input type="text" class="solo-in" id="teamBatch" placeholder="Batch" maxlength="20" style="max-width:240px;">
+  </div>
+  <div class="err" id="setupErr"></div>
+  <div class="sec">
+    <div class="slbl">Timer per round</div>
+    <div class="pills" id="tPills">
+      <button class="pill" data-t="30">30 seconds</button>
+      <button class="pill on" data-t="60">60 seconds</button>
+      <button class="pill" data-t="90">90 seconds</button>
+    </div>
+  </div>
+  <div class="info-note" id="infoNote">
+    <i class="ti ti-info-circle" style="font-size:14px;vertical-align:-2px;margin-right:5px;" aria-hidden="true"></i>
+    Display on a projector. Each team discusses and clicks their answer on screen — or the instructor clicks on their behalf after teams shout out or hold up whiteboards. Using 3 clues reduces maximum points from 100 → 80 → 60 → 40.
+  </div>
+  <button class="go-btn" id="startBtn">
+    <i class="ti ti-player-play" style="font-size:16px;vertical-align:-2px;margin-right:6px;" aria-hidden="true"></i>Start game
+  </button>
+</div>
+
+<div class="sc" id="scP">
+  <div class="gbar">
+    <div class="rpill" id="rPill">Round 1</div>
+    <div class="gbar-title">Distribution detective</div>
+    <div class="tbox">
+      <div class="tv tg" id="tv">1:00</div>
+      <small>remaining</small>
+    </div>
+  </div>
+  <div class="sstrip" id="sstrip"></div>
+  <div class="ctx" id="ctx"></div>
+  <div class="hist"><canvas id="ch" role="img" aria-label="Frequency histogram for current round"></canvas></div>
+  <div class="clue-btns" id="cbtns"></div>
+  <div id="cshown"></div>
+  <div class="maxrow">Points available this round: <b id="mpv">100</b></div>
+  <div class="div"></div>
+  <div class="tanslbl" id="ansLbl">Lock in your team's answer</div>
+  <div id="tans"></div>
+  <button class="end-btn" id="endBtn">
+    <i class="ti ti-flag" style="font-size:15px;vertical-align:-2px;margin-right:6px;" aria-hidden="true"></i>End round &amp; reveal answer
+  </button>
+</div>
+
+<div class="sc" id="scR">
+  <div class="ans-c">
+    <div class="ans-lbl">The correct answer was</div>
+    <div class="ans-name" id="resAns"></div>
+  </div>
+  <div class="slbl" id="whyLbl">Why this distribution?</div>
+  <div id="resClues" style="margin-bottom:.5rem;"></div>
+  <div class="rexpl" id="resExpl"></div>
+  <div class="slbl">Round scores</div>
+  <div class="res-grid" id="resCards"></div>
+  <button class="next-btn" id="nextBtn">Next round <i class="ti ti-arrow-right" style="font-size:14px;vertical-align:-2px;" aria-hidden="true"></i></button>
+</div>
+
+<div class="sc" id="scF">
+  <div class="final-hd">
+    <div class="trophy"><i class="ti ti-trophy" aria-hidden="true"></i></div>
+    <h1>Game over!</h1>
+    <div class="winner-txt" id="winTxt"></div>
+  </div>
+  <div class="part" id="partCard"></div>
+  <div class="stat-grid" id="soloStats" style="display:none;"></div>
+  <div class="slbl" id="lbLbl">Final leaderboard</div>
+  <table class="lbt" id="lbTable">
+    <thead><tr><th style="width:12%">Rank</th><th style="width:42%">Team</th><th style="width:26%">Score</th><th style="width:20%">Correct</th></tr></thead>
+    <tbody id="lbB"></tbody>
+  </table>
+  <button class="replay-btn" id="replayBtn">
+    <i class="ti ti-refresh" style="font-size:14px;vertical-align:-2px;margin-right:5px;" aria-hidden="true"></i>Play again
+  </button>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const DS=[
+  {ctx:"A bank branch receives exactly 15 home loan applications every working day. This data records how many were approved per day across 40 consecutive working days.",
+   labels:["7","8","9","10","11","12"],freqs:[1,5,11,13,7,3],xLbl:"Approvals per day (out of 15)",
+   ans:"Binomial",
+   clues:["Each observation is a count of successes out of exactly 15 fixed trials (n = 15)","Each loan decision has only two outcomes — approved or rejected — with a roughly constant probability","Histogram is bell-shaped and strictly bounded; values cannot fall below 0 or exceed 15"],
+   expl:"Binomial(n=15, p≈0.65). The setup gives you n directly: 15 applications per day. Mean = np = 9.75. Key check: fixed n trials with binary outcomes and constant p? Yes — it's Binomial."},
+  {ctx:"A payment gateway logs the number of UPI fraud alerts triggered each hour. The data covers 50 consecutive hours of network monitoring.",
+   labels:["0","1","2","3","4","5","6","7","8"],freqs:[2,7,11,11,8,5,3,2,1],xLbl:"Fraud alerts per hour",
+   ans:"Poisson",
+   clues:["Counts rare, independent events in a fixed time interval — exactly 1 hour","Mean ≈ Variance: Mean = 3.2, Variance = SD² = 1.8² = 3.24 — the defining Poisson signature","Starts at 0, slightly right-skewed, and unbounded on the right"],
+   expl:"Poisson(λ≈3.2). The single check: Mean ≈ Variance ≈ 3.2. Poisson models rare, independent events at a constant average rate. When you see mean ≈ variance, consider Poisson first."},
+  {ctx:"A fintech lender records the disbursed amount (₹ thousands) for 40 personal loans approved in one month.",
+   labels:["100–110","110–120","120–130","130–140","140–150","150–160","160–170","170–180"],freqs:[1,1,5,9,12,6,4,2],xLbl:"Loan amount (₹ thousands)",
+   ans:"Normal",
+   clues:["Histogram is symmetric and bell-shaped — frequencies peak at the centre and taper equally on both sides","Mean ≈ Median ≈ 142 — all three measures of central tendency coincide","Roughly 68% of values fall within ±1 SD of the mean (₹127.7K to ₹157.9K)"],
+   expl:"Normal(μ≈143, σ≈15). The symmetric bell shape is the giveaway. Loan amounts driven by many factors tend toward Normality by the CLT. Verify with the 68-95-99.7 rule."},
+  {ctx:"Customers arriving at a bank branch between 11 AM and 12 PM are randomly assigned a queue position. Wait times (minutes) for 40 customers are recorded.",
+   labels:["2–6","6–10","10–14","14–18","18–22"],freqs:[8,8,8,8,8],xLbl:"Wait time (minutes)",
+   ans:"Uniform",
+   clues:["Every interval has exactly equal frequency — the histogram is perfectly flat and rectangular","All values between minimum (2) and maximum (22) appear with equal probability","Mean = (a+b)/2 = (2+22)/2 = 12 — the midpoint formula confirms Uniform"],
+   expl:"Uniform(a=2, b=22). The flat rectangular histogram is unmistakable — no peak, no skew. Mean = (a+b)/2 = 12. Use Uniform whenever every value in a bounded range is equally probable."},
+  {ctx:"A bank's SME loan portfolio records the number of days elapsed between consecutive default events. The data shows 40 observed inter-default intervals.",
+   labels:["0–5","5–10","10–15","15–20","20–30","30–45","45–60"],freqs:[11,6,6,5,5,4,3],xLbl:"Days between defaults",
+   ans:"Exponential",
+   clues:["Histogram starts highest on the left and decreases steadily — classic exponential decay","Mean ≈ SD: Mean = 15.5, SD = 13.8. For Exponential, mean = SD = 1/λ is the defining identity","Models waiting time between independent rare events; most gaps are short, a few are very long"],
+   expl:"Exponential(λ≈1/15). Key check: Mean ≈ SD ≈ 15. No other distribution has mean = SD as a defining property. The steeply declining histogram is the visual signature."},
+  {ctx:"A D2C brand sends a promotional email to exactly 20 leads every day. This data records how many leads clicked the email link per day, across 40 days.",
+   labels:["4","5","6","7","8","9","10","11","12"],freqs:[1,3,6,9,9,7,3,1,1],xLbl:"Clicks per day (out of 20)",
+   ans:"Binomial",
+   clues:["Each observation is a count of successes out of exactly 20 fixed sends (n = 20)","Every lead either clicks or doesn't — a binary outcome with a roughly constant click probability p ≈ 0.38","Histogram is bell-shaped and bounded between 0 and 20 — it can never exceed the number of emails sent"],
+   expl:"Binomial(n=20, p≈0.38). Mean = np = 20×0.38 = 7.6, matching the data. Probability check: P(X=8) = C(20,8)(0.38)⁸(0.62)¹² ≈ 0.18 — an 18% chance of exactly 8 clicks on any given day."},
+  {ctx:"An e-commerce app's social team logs the number of negative reviews posted on the app store each day, across 40 consecutive days.",
+   labels:["0","1","2","3","4","5","6","7"],freqs:[4,9,10,8,5,2,1,1],xLbl:"Negative reviews per day",
+   ans:"Poisson",
+   clues:["Counts rare, independent events (negative reviews) within a fixed interval — one day","Mean ≈ Variance: Mean = 2.4, Variance ≈ 2.64 — close enough to flag the Poisson signature","Starts at 0, right-skewed, with no upper bound on how many reviews could appear"],
+   expl:"Poisson(λ≈2.4). Mean ≈ Variance confirms the model. Probability check: P(X=0) = e⁻²·⁴ ≈ 0.091 (a 9% chance of zero bad reviews), and P(X=3) = e⁻²·⁴(2.4)³/3! ≈ 0.21 — a 21% chance of exactly 3 in a day."},
+  {ctx:"A retail chain records the amount spent (₹) per transaction by 40 customers who redeemed a festive discount coupon.",
+   labels:["500–600","600–700","700–800","800–900","900–1000","1000–1100","1100–1200","1200–1300"],freqs:[1,2,5,9,11,7,4,1],xLbl:"Transaction value (₹)",
+   ans:"Normal",
+   clues:["Histogram is symmetric and bell-shaped, peaking at the centre and tapering evenly on both sides","Mean ≈ Median ≈ ₹922 — the central tendency measures coincide, as expected for Normal data","Roughly 68% of transactions fall within ±1 SD of the mean (₹772 to ₹1072)"],
+   expl:"Normal(μ≈₹922, σ≈₹150). The symmetric bell shape and coinciding mean/median are the giveaway. Probability check: P(X > ₹1200) uses z = (1200−922)/150 ≈ 1.85, giving a right-tail area ≈ 0.032 — only about 3% of shoppers spend above ₹1200."},
+  {ctx:"A UX team measures time (seconds) visitors spend on a new landing page before bouncing or scrolling, sampled from 40 sessions.",
+   labels:["10–20","20–30","30–40","40–50","50–60"],freqs:[8,8,8,8,8],xLbl:"Time on page (seconds)",
+   ans:"Uniform",
+   clues:["Every interval has exactly equal frequency — the histogram is perfectly flat and rectangular","All values between the minimum (10s) and maximum (60s) are equally likely to occur","Mean = (a+b)/2 = (10+60)/2 = 35 — the midpoint formula confirms Uniform"],
+   expl:"Uniform(a=10, b=60). The flat rectangular histogram rules out every other shape. Probability check: P(30 ≤ X ≤ 50) = (50−30)/(60−10) = 20/50 = 0.40 — a 40% chance a session's time-on-page falls in that band."},
+  {ctx:"An online store tracks the time (in minutes) between consecutive purchases on its app, recorded across 40 inter-purchase intervals.",
+   labels:["0–5","5–10","10–15","15–20","20–30","30–45","45–60"],freqs:[12,7,6,5,4,3,3],xLbl:"Minutes between purchases",
+   ans:"Exponential",
+   clues:["Histogram starts highest on the left and decays steadily — the classic exponential shape","Mean ≈ SD: Mean = 15.4, SD ≈ 14.9 — the mean-equals-SD identity is the Exponential fingerprint","Models the waiting time between independent purchase events; most gaps are short, a few are long"],
+   expl:"Exponential(λ≈1/15.4 ≈ 0.065). Probability check: P(X < 10) = 1 − e^(−0.065×10) = 1 − e^(−0.65) ≈ 0.48 — a 48% chance the next purchase arrives within 10 minutes."},
+  {ctx:"A trading desk executes exactly 25 trades every day. This data records how many trades closed in profit per day, across 40 trading days.",
+   labels:["11","12","13","14","15","16","17","18","19"],freqs:[1,3,5,7,8,7,5,3,1],xLbl:"Profitable trades per day (out of 25)",
+   ans:"Binomial",
+   clues:["Each observation is a count of successes out of exactly 25 fixed trades (n = 25)","Every trade either closes in profit or not, with a roughly constant win probability p ≈ 0.6","Histogram is bell-shaped and bounded between 0 and 25 — it can't exceed the day's trade count"],
+   expl:"Binomial(n=25, p≈0.6). Mean = np = 25×0.6 = 15, matching the data exactly. Probability check: P(X=15) = C(25,15)(0.6)¹⁵(0.4)¹⁰ ≈ 0.16 — a 16% chance of exactly 15 profitable trades on any day."},
+  {ctx:"A bank's treasury desk logs the number of large-value RTGS transactions (above ₹1 crore) processed per hour, across 40 monitored hours.",
+   labels:["0","1","2","3","4","5","6"],freqs:[3,8,10,9,6,3,1],xLbl:"Large RTGS transactions per hour",
+   ans:"Poisson",
+   clues:["Counts rare, independent high-value transactions within a fixed interval — one hour","Mean ≈ Variance ≈ 2.5 — the defining Poisson signature shows up clearly here","Starts at 0, right-skewed, with no fixed upper limit on hourly transaction counts"],
+   expl:"Poisson(λ≈2.5). Mean ≈ Variance confirms the fit. Probability check: P(X ≥ 5) = 1 − [P(0)+P(1)+P(2)+P(3)+P(4)] ≈ 1 − 0.891 ≈ 0.11 — an 11% chance of 5 or more large transactions in an hour."},
+  {ctx:"A mutual fund's daily NAV percentage returns are tracked over 40 trading days.",
+   labels:["-2 to -1.5","-1.5 to -1","-1 to -0.5","-0.5 to 0","0 to 0.5","0.5 to 1","1 to 1.5","1.5 to 2"],freqs:[1,2,6,10,10,6,3,2],xLbl:"Daily return (%)",
+   ans:"Normal",
+   clues:["Histogram is symmetric and bell-shaped around a small positive centre","Mean ≈ Median ≈ 0.1% — the central tendency measures coincide, as expected for Normal data","Roughly 68% of daily returns fall within ±1 SD of the mean (-0.7% to 0.9%)"],
+   expl:"Normal(μ≈0.1%, σ≈0.8%). The symmetric bell shape signals Normal returns. Probability check: P(X < -1%) uses z = (-1-0.1)/0.8 ≈ -1.375, giving a left-tail area ≈ 0.085 — about an 8.5% chance of a day worse than -1%."},
+  {ctx:"A compliance team randomly audits the transaction amount (₹ lakh) flagged for review, uniformly sampled between ₹5 lakh and ₹25 lakh, across 40 audits.",
+   labels:["5–9","9–13","13–17","17–21","21–25"],freqs:[8,8,8,8,8],xLbl:"Flagged amount (₹ lakh)",
+   ans:"Uniform",
+   clues:["Every interval has exactly equal frequency — the histogram is perfectly flat and rectangular","All values between the minimum (₹5L) and maximum (₹25L) are equally likely to be flagged","Mean = (a+b)/2 = (5+25)/2 = 15 — the midpoint formula confirms Uniform"],
+   expl:"Uniform(a=5, b=25). The flat rectangular histogram is unmistakable. Probability check: P(9 ≤ X ≤ 17) = (17−9)/(25−5) = 8/20 = 0.40 — a 40% chance a flagged amount falls between ₹9L and ₹17L."},
+  {ctx:"A bank branch records the time (in days) between consecutive large withdrawal requests (above ₹50 lakh), across 40 inter-arrival intervals.",
+   labels:["0–5","5–10","10–15","15–20","20–30","30–45","45–60"],freqs:[13,7,6,5,4,3,2],xLbl:"Days between large withdrawals",
+   ans:"Exponential",
+   clues:["Histogram starts highest on the left and decays steadily — the classic exponential shape","Mean ≈ SD: Mean = 14.1, SD ≈ 13.6 — the mean-equals-SD identity is the Exponential fingerprint","Models the waiting time between independent large-withdrawal events; most gaps are short, a few very long"],
+   expl:"Exponential(λ≈1/14.1 ≈ 0.071). Probability check: P(X > 20) = e^(−0.071×20) = e^(−1.42) ≈ 0.24 — a 24% chance of waiting more than 20 days for the next large withdrawal."}
+];
+
+DS.forEach(d=>d.type='id');
+
+const PS=[
+ {type:'prob',tag:'Find probability · given cutoff',
+  ctx:"A relationship manager contacts 12 customers a day. Each customer independently buys a credit card with probability 0.25.",
+  q:"Find P(at least 4 customers buy a card).",
+  ans:"0.3512",opts:["0.3512","0.1576","0.6488","0.1936"],
+  chart:{d:'binom',n:12,p:0.25,lo:4,hi:12,xLbl:"Customers who buy (out of 12)"},
+  clues:["Fixed n = 12 independent trials, each success with p = 0.25, so X ~ Binomial(12, 0.25)","'At least 4' means P(X ≥ 4) = 1 − P(X ≤ 3) — use the complement, not the tail directly","P(X ≤ 3) = 0.6488, so the answer is 1 − 0.6488"],
+  expl:"X ~ Binomial(n=12, p=0.25). P(X ≥ 4) = 1 − P(X ≤ 3) = 1 − 0.6488 = 0.3512. Trap answers: 0.1576 is P(X > 4) (strictly greater), 0.6488 is P(X ≤ 3), and 0.1936 is just P(X = 4)."},
+ {type:'prob',tag:'Min cutoff · given probability',
+  ctx:"A trading desk executes 20 trades a day. Each trade independently closes in profit with probability 0.6.",
+  q:"Find the smallest k such that P(X ≤ k) ≥ 0.95.",
+  ans:"k = 16",opts:["k = 14","k = 15","k = 16","k = 17"],
+  chart:{d:'binom',n:20,p:0.6,xLbl:"Profitable trades (out of 20)"},
+  clues:["X ~ Binomial(20, 0.6) with mean np = 12 — the cutoff must lie above the mean","Build the cumulative probabilities: P(X ≤ 14) = 0.8744 and P(X ≤ 15) = 0.9490","P(X ≤ 15) = 0.949 is just short of 0.95, so you must go one step further"],
+  expl:"X ~ Binomial(20, 0.6). Cumulative: P(X ≤ 14) = 0.8744, P(X ≤ 15) = 0.9490 (< 0.95), P(X ≤ 16) = 0.9840 (≥ 0.95). The smallest k meeting the condition is 16. For discrete distributions the cutoff must be checked directly — never round the normal approximation blindly."},
+ {type:'prob',tag:'Find probability · given cutoff',
+  ctx:"A helpline receives on average 4 calls per hour. Calls arrive independently at a constant rate.",
+  q:"Find P(at most 2 calls in an hour).",
+  ans:"0.2381",opts:["0.2381","0.1465","0.7619","0.0916"],
+  chart:{d:'pois',lam:4,lo:0,hi:2,xLbl:"Calls per hour"},
+  clues:["Counts of independent events in a fixed interval with mean 4, so X ~ Poisson(λ = 4)","P(X ≤ 2) = P(0) + P(1) + P(2), where P(k) = e^(−4)·4^k / k!","P(0) = 0.0183, P(1) = 0.0733, P(2) = 0.1465 — now add them up"],
+  expl:"X ~ Poisson(4). P(X ≤ 2) = 0.0183 + 0.0733 + 0.1465 = 0.2381. Trap answers: 0.1465 is only P(X = 2), 0.7619 is P(X > 2), and 0.0916 is P(X ≤ 1), which stops one term too early."},
+ {type:'prob',tag:'Min cutoff · given probability',
+  ctx:"A payment gateway triggers on average 3 fraud alerts per hour (Poisson). The security team wants enough analysts to handle every hour's alerts at least 95% of the time.",
+  q:"Find the smallest k such that P(X ≤ k) ≥ 0.95.",
+  ans:"k = 6",opts:["k = 5","k = 6","k = 7","k = 8"],
+  chart:{d:'pois',lam:3,xLbl:"Fraud alerts per hour"},
+  clues:["X ~ Poisson(λ = 3); the mean is 3, so the 95th percentile lies a few steps above it","Cumulative values: P(X ≤ 4) = 0.8153 and P(X ≤ 5) = 0.9161","P(X ≤ 5) = 0.9161 is still below 0.95 — check the next value"],
+  expl:"X ~ Poisson(3). P(X ≤ 5) = 0.9161 (< 0.95) while P(X ≤ 6) = 0.9665 (≥ 0.95). So the team must be able to handle k = 6 alerts per hour to cover at least 95% of hours."},
+ {type:'prob',tag:'Find probability · given cutoff',
+  ctx:"Delivery time of an order is Uniformly distributed between 10 and 50 minutes.",
+  q:"Find P(delivery takes more than 35 minutes).",
+  ans:"0.375",opts:["0.375","0.625","0.300","0.250"],
+  chart:{d:'unif',a:10,b:50,lo:35,hi:50,xLbl:"Delivery time (minutes)"},
+  clues:["X ~ Uniform(a = 10, b = 50); the density is constant at 1/(b − a) = 1/40","For a Uniform, probability = (length of interval) ÷ (b − a)","The interval 35 to 50 has length 15"],
+  expl:"X ~ Uniform(10, 50). P(X > 35) = (50 − 35)/(50 − 10) = 15/40 = 0.375. Trap answers: 0.625 is P(X < 35); 0.300 uses 50 as the denominator instead of the range 40."},
+ {type:'prob',tag:'Find cutoff · given probability',
+  ctx:"A compliance team audits flagged transaction amounts that are Uniformly spread between ₹5 lakh and ₹25 lakh.",
+  q:"Find the cutoff c such that only the top 10% of amounts exceed it, i.e. P(X > c) = 0.10.",
+  ans:"₹23 lakh",opts:["₹23 lakh","₹7 lakh","₹22.5 lakh","₹24 lakh"],
+  chart:{d:'unif',a:5,b:25,xLbl:"Flagged amount (₹ lakh)"},
+  clues:["X ~ Uniform(5, 25), range = 20","Top 10% means 90% of the probability lies below c: P(X ≤ c) = 0.90","c = a + 0.90 × (b − a) = 5 + 0.90 × 20"],
+  expl:"X ~ Uniform(5, 25). P(X > c) = (25 − c)/20 = 0.10, so c = 25 − 2 = ₹23 lakh. Trap answers: ₹7 lakh is the bottom-10% cutoff; ₹22.5 lakh forgets that the distribution starts at 5, not 0."},
+ {type:'prob',tag:'Min / max cutoff · given probability',
+  ctx:"Service time at a bank counter is Uniformly distributed between 20 and 60 seconds.",
+  q:"Find the minimum time t such that at most 15% of services last longer than t, i.e. P(X > t) ≤ 0.15.",
+  ans:"54 seconds",opts:["54 seconds","51 seconds","26 seconds","57 seconds"],
+  chart:{d:'unif',a:20,b:60,xLbl:"Service time (seconds)"},
+  clues:["X ~ Uniform(20, 60), range = 40","P(X > t) = (60 − t)/40 must be ≤ 0.15","Solve (60 − t)/40 = 0.15 → 60 − t = 6"],
+  expl:"X ~ Uniform(20, 60). (60 − t)/40 = 0.15 gives t = 60 − 6 = 54 seconds. Trap answers: 51 = 0.85 × 60 ignores the lower limit, and 26 = 20 + 0.15 × 40 is the 15th percentile, not the 85th."},
+ {type:'prob',tag:'Find probability · given cutoff',
+  ctx:"The time between consecutive purchases on an app is Exponentially distributed with a mean of 12 minutes.",
+  q:"Find P(the next purchase takes more than 20 minutes).",
+  ans:"0.1889",opts:["0.1889","0.8111","0.4346","0.5654"],
+  chart:{d:'exp',mean:12,lo:20,hi:Infinity,xLbl:"Minutes between purchases"},
+  clues:["X ~ Exponential with mean 1/λ = 12, so λ = 1/12 ≈ 0.0833","Survival function: P(X > x) = e^(−λx)","P(X > 20) = e^(−20/12) = e^(−1.667)"],
+  expl:"X ~ Exponential(λ = 1/12). P(X > 20) = e^(−20/12) = e^(−1.667) ≈ 0.1889. Trap answers: 0.8111 is P(X ≤ 20), and 0.4346 / 0.5654 correspond to a 10-minute cutoff instead of 20."},
+ {type:'prob',tag:'Find cutoff · given probability',
+  ctx:"A server fails on average once every 8 hours; the time between failures is Exponential with mean 8 hours.",
+  q:"Find t such that P(X ≤ t) = 0.75, i.e. 75% of gaps are shorter than t.",
+  ans:"11.09 hours",opts:["11.09 hours","5.55 hours","6.00 hours","18.42 hours"],
+  chart:{d:'exp',mean:8,xLbl:"Hours between failures"},
+  clues:["X ~ Exponential with mean 8, so the CDF is F(t) = 1 − e^(−t/8)","Set 1 − e^(−t/8) = 0.75, so e^(−t/8) = 0.25","t = −8 × ln(0.25) = 8 × ln 4"],
+  expl:"F(t) = 1 − e^(−t/8) = 0.75 → e^(−t/8) = 0.25 → t = 8 ln 4 ≈ 11.09 hours. Trap answers: 5.55 h is the median (8 ln 2); 6.00 h wrongly takes 0.75 × mean; 18.42 h is the 90th percentile (8 ln 10)."},
+ {type:'prob',tag:'Min / max cutoff · given probability',
+  ctx:"The duration of a customer-care call is Exponentially distributed with a mean of 5 minutes.",
+  q:"Find the minimum duration t such that at most 5% of calls last longer than t, i.e. P(X > t) ≤ 0.05.",
+  ans:"14.98 minutes",opts:["14.98 minutes","11.51 minutes","0.26 minutes","25.00 minutes"],
+  chart:{d:'exp',mean:5,xLbl:"Call duration (minutes)"},
+  clues:["X ~ Exponential with mean 5, so P(X > t) = e^(−t/5)","Set e^(−t/5) = 0.05","t = −5 × ln(0.05) = 5 × 2.996"],
+  expl:"e^(−t/5) = 0.05 → t = −5 ln(0.05) ≈ 14.98 minutes. Trap answers: 11.51 is the 10% tail (5 ln 10); 0.26 is the 5th percentile (−5 ln 0.95), the wrong tail; 25 is just 5 × mean."},
+ {type:'prob',tag:'Find probability · given cutoff',
+  ctx:"Monthly sales of a store are Normally distributed with mean ₹500 lakh and standard deviation ₹60 lakh.",
+  q:"Find P(sales exceed ₹560 lakh).",
+  ans:"0.1587",opts:["0.1587","0.8413","0.3413","0.0228"],
+  chart:{d:'norm',mu:500,sd:60,lo:560,hi:Infinity,xLbl:"Monthly sales (₹ lakh)"},
+  clues:["X ~ Normal(μ = 500, σ = 60) — standardise using z = (x − μ)/σ","z = (560 − 500)/60 = 1.00","P(Z > 1) = 1 − Φ(1) = 1 − 0.8413"],
+  expl:"z = (560 − 500)/60 = 1. P(X > 560) = P(Z > 1) = 1 − 0.8413 = 0.1587. Trap answers: 0.8413 is the left tail, 0.3413 is P(0 < Z < 1), and 0.0228 is the tail beyond 2σ."},
+ {type:'prob',tag:'Find probability · given cutoff',
+  ctx:"Delivery time of a quick-commerce order is Normally distributed with mean 45 minutes and standard deviation 8 minutes.",
+  q:"Find P(40 < X < 55).",
+  ans:"0.6284",opts:["0.6284","0.7887","0.8944","0.3716"],
+  chart:{d:'norm',mu:45,sd:8,lo:40,hi:55,xLbl:"Delivery time (minutes)"},
+  clues:["X ~ Normal(45, 8) — convert both cutoffs to z-scores","z₁ = (40 − 45)/8 = −0.625 and z₂ = (55 − 45)/8 = 1.25","P = Φ(1.25) − Φ(−0.625) = 0.8944 − 0.2660"],
+  expl:"z-scores: −0.625 and 1.25. P(40 < X < 55) = Φ(1.25) − Φ(−0.625) = 0.8944 − 0.2660 = 0.6284. Trap answers: 0.7887 treats the interval as symmetric (±1.25), 0.8944 forgets to subtract the lower tail, 0.3716 is the complement."},
+ {type:'prob',tag:'Find cutoff · given probability',
+  ctx:"Credit scores of applicants are Normally distributed with mean 680 and standard deviation 50. A bank offers a premium card to the top 10% of scores.",
+  q:"Find the minimum score needed to qualify, i.e. P(X > c) = 0.10.",
+  ans:"744",opts:["744","616","762","730"],
+  chart:{d:'norm',mu:680,sd:50,xLbl:"Credit score"},
+  clues:["X ~ Normal(680, 50); top 10% means P(X ≤ c) = 0.90","Look up z for a cumulative area of 0.90: z ≈ 1.28","c = μ + zσ = 680 + 1.28 × 50"],
+  expl:"P(Z ≤ z) = 0.90 → z = 1.2816. c = 680 + 1.2816 × 50 ≈ 744. Trap answers: 616 is the bottom-10% cutoff (z = −1.28), 762 is the top-5% cutoff (z = 1.645), 730 uses z = 1."},
+ {type:'prob',tag:'Max cutoff · given probability',
+  ctx:"The life of a battery is Normally distributed with mean 1200 hours and standard deviation 100 hours. The firm wants a warranty so that only 5% of batteries fail before it ends.",
+  q:"Find the maximum warranty period w such that P(X < w) = 0.05.",
+  ans:"1035.5 hours",opts:["1035.5 hours","1364.5 hours","1000 hours","1100 hours"],
+  chart:{d:'norm',mu:1200,sd:100,xLbl:"Battery life (hours)"},
+  clues:["X ~ Normal(1200, 100); the cutoff lies in the lower tail, so z will be negative","z for a cumulative area of 0.05 is −1.645","w = 1200 + (−1.645) × 100"],
+  expl:"P(Z < z) = 0.05 → z = −1.645. w = 1200 − 1.645 × 100 ≈ 1035.5 hours. Trap answers: 1364.5 is the upper (95th percentile) cutoff, 1000 uses z = −2, and 1100 uses z = −1."},
+ {type:'prob',tag:'Min cutoff · given probability',
+  ctx:"Weekly demand for a product is Normally distributed with mean 250 units and standard deviation 40 units. A retailer wants a 95% service level.",
+  q:"Find the smallest stock level S such that P(Demand ≤ S) ≥ 0.95.",
+  ans:"316 units",opts:["316 units","302 units","328 units","290 units"],
+  chart:{d:'norm',mu:250,sd:40,xLbl:"Weekly demand (units)"},
+  clues:["X ~ Normal(250, 40); you need the 95th percentile of demand","z for a cumulative area of 0.95 is 1.645","S = 250 + 1.645 × 40 = 250 + 65.8"],
+  expl:"P(Z ≤ z) = 0.95 → z = 1.645. S = 250 + 1.645 × 40 = 315.8 → stock 316 units (rounded up so the service level is at least 95%). Trap answers: 302 is the 90% level (z = 1.28), 328 is the 97.5% level (z = 1.96), 290 uses z = 1."}
+];
+
+const DISTS=["Binomial","Poisson","Normal","Uniform","Exponential"];
+const RANKS=["1st","2nd","3rd","4th","5th","6th"];
+
+const G={mode:'team',qset:'all',deck:[],opts:[],nTeams:3,totalTime:60,teams:[],scores:[],corrects:[],round:0,timeLeft:60,timer:null,hintsUsed:0,maxPts:100,answers:{},roundEnded:false,chart:null};
+
+function show(id){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);}
+
+function updateRoundsLabel(){
+  const n=G.qset==='id'?DS.length:G.qset==='prob'?PS.length:DS.length+PS.length;
+  document.getElementById('nRounds').textContent=n;
+}
+function applyMode(){
+  const solo=G.mode==='solo';
+  document.getElementById('secCount').style.display=solo?'none':'block';
+  document.getElementById('secNames').style.display=solo?'none':'block';
+  document.getElementById('secSolo').style.display=solo?'block':'none';
+  const note=document.getElementById('infoNote');
+  note.lastChild.textContent=solo
+    ?' Solo mode: play on your own screen. Read the question, use clues if you get stuck, and lock in your answer before the timer runs out. Using 3 clues reduces maximum points from 100 → 80 → 60 → 40.'
+    :' Display on a projector. Each team discusses and clicks their answer on screen — or the instructor clicks on their behalf after teams shout out or hold up whiteboards. Using 3 clues reduces maximum points from 100 → 80 → 60 → 40.';
+}
+function initSetup(){
+  document.querySelectorAll('#mPills .pill').forEach(p=>{
+    p.onclick=()=>{document.querySelectorAll('#mPills .pill').forEach(x=>x.classList.remove('on'));p.classList.add('on');G.mode=p.dataset.m;applyMode();};
+  });
+  document.querySelectorAll('#qPills .pill').forEach(p=>{
+    p.onclick=()=>{document.querySelectorAll('#qPills .pill').forEach(x=>x.classList.remove('on'));p.classList.add('on');G.qset=p.dataset.q;updateRoundsLabel();};
+  });
+  applyMode();updateRoundsLabel();
+  document.querySelectorAll('#cPills .pill').forEach(p=>{
+    p.onclick=()=>{document.querySelectorAll('#cPills .pill').forEach(x=>x.classList.remove('on'));p.classList.add('on');G.nTeams=+p.dataset.n;renderNameGrid();};
+  });
+  document.querySelectorAll('#tPills .pill').forEach(p=>{
+    p.onclick=()=>{document.querySelectorAll('#tPills .pill').forEach(x=>x.classList.remove('on'));p.classList.add('on');G.totalTime=+p.dataset.t;};
+  });
+  renderNameGrid();
+  document.getElementById('startBtn').onclick=startGame;
+  document.getElementById('endBtn').onclick=endRound;
+  document.getElementById('replayBtn').onclick=()=>{G.round=0;G.scores=G.teams.map(()=>0);G.corrects=G.teams.map(()=>0);show('scS');renderNameGrid();};
+}
+
+function renderNameGrid(){
+  const g=document.getElementById('nGrid');g.innerHTML='';
+  for(let i=0;i<G.nTeams;i++){
+    const inp=document.createElement('input');
+    inp.type='text';inp.placeholder='Team '+(i+1);inp.value=G.teams[i]?G.teams[i].name:'Team '+(i+1);inp.dataset.i=i;
+    g.appendChild(inp);
+    inp.oninput=()=>{const l=document.querySelector('#mGrid [data-i="'+i+'"] label');if(l)l.textContent=inp.value||('Team '+(i+1));};
+  }
+  const m=document.getElementById('mGrid');m.innerHTML='';
+  for(let i=0;i<G.nTeams;i++){
+    const row=document.createElement('div');row.className='mem-row';row.dataset.i=i;
+    const prev=G.teams[i]&&G.teams[i].members?G.teams[i].members:'';
+    row.innerHTML='<label>'+(G.teams[i]?G.teams[i].name:'Team '+(i+1))+'</label><input type="text" class="solo-in" placeholder="e.g. Asha Rao – 24001, Ravi K – 24002" maxlength="160" value="'+prev.replace(/"/g,'&quot;')+'">';
+    m.appendChild(row);
+  }
+}
+
+function startGame(){
+  const err=document.getElementById('setupErr');err.style.display='none';
+  const bad=m=>{err.textContent=m;err.style.display='block';};
+  if(G.mode==='solo'){
+    const nm=document.getElementById('soloName').value.trim(),rl=document.getElementById('soloRoll').value.trim(),bt=document.getElementById('soloBatch').value.trim();
+    if(!nm||!rl||!bt){bad('Please enter Student name, Roll No. and Batch to start.');return;}
+    G.student={name:nm,roll:rl,batch:bt};
+    G.teams=[{name:nm,members:nm+' – '+rl}];
+  }else{
+    const ins=document.querySelectorAll('#nGrid input'),mem=document.querySelectorAll('#mGrid input');
+    const bt=document.getElementById('teamBatch').value.trim();
+    G.teams=Array.from(ins).map((inp,i)=>({name:inp.value.trim()||'Team '+(i+1),members:mem[i].value.trim()}));
+    if(G.teams.some(t=>!t.members)||!bt){bad('Please enter team members (name & roll no.) for every team, and the Batch.');return;}
+    G.student={batch:bt};
+  }
+  G.deck=G.qset==='id'?DS.slice():G.qset==='prob'?PS.slice():DS.concat(PS);
+  G.posSeq=balancedPositions(G.deck.filter(q=>q.type==='prob').length);
+  G.scores=G.teams.map(()=>0);G.corrects=G.teams.map(()=>0);G.round=0;startRound();
+}
+
+function startRound(){
+  const d=G.deck[G.round];
+  G.hintsUsed=0;G.maxPts=100;G.answers={};G.roundEnded=false;G.timeLeft=G.totalTime;
+  show('scP');
+  document.getElementById('rPill').textContent='Round '+(G.round+1)+' of '+G.deck.length;
+  document.getElementById('ctx').innerHTML=(d.tag?'<div class="tagb">'+d.tag+'</div><br>':'')+d.ctx+(d.q?'<div class="qline">'+d.q+'</div>':'');
+  if(d.type==='prob'){
+    const pi=G.deck.slice(0,G.round).filter(q=>q.type==='prob').length;
+    const pos=G.posSeq[pi]%d.opts.length;
+    const others=shuffle(d.opts.filter(o=>o!==d.ans));
+    G.opts=others.slice(0,pos).concat([d.ans],others.slice(pos));
+  }else G.opts=DISTS;
+  document.getElementById('ansLbl').textContent=G.mode==='solo'?'Lock in your answer':'Lock in your team\'s answer';
+  document.getElementById('mpv').textContent=100;
+  renderStrip();renderClueBtns(d);document.getElementById('cshown').innerHTML='';renderTeamAnswers();renderChart(d);startTimer();
+}
+
+function balancedPositions(n){
+  // equal number of answers in each of the 4 positions, never 3 in a row, never 2 in a row more than once in a while
+  let seq,ok=false,tries=0;
+  while(!ok&&tries++<500){
+    seq=shuffle(Array.from({length:n},(_,i)=>i%4));
+    ok=true;
+    for(let i=1;i<n;i++){if(seq[i]===seq[i-1]){ok=false;break;}}
+  }
+  return seq;
+}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function renderStrip(){
+  const max=G.scores.length?Math.max(...G.scores):0;
+  document.getElementById('sstrip').innerHTML=G.teams.map((t,i)=>`<div class="ms"><div class="ms-n">${t.name}</div><div class="ms-v${G.scores[i]===max&&G.scores[i]>0?' top':''}">${G.scores[i]}</div></div>`).join('');
+}
+
+function renderClueBtns(d){
+  const el=document.getElementById('cbtns');
+  el.innerHTML=[0,1,2].map(i=>`<button class="cb" data-i="${i}" ${i>0?'disabled':''}>Clue ${i+1} (−20 pts)</button>`).join('');
+  el.querySelectorAll('.cb').forEach(b=>b.onclick=()=>{if(!b.disabled)revealClue(+b.dataset.i,d);});
+}
+
+function revealClue(idx,d){
+  G.hintsUsed=idx+1;G.maxPts=100-G.hintsUsed*20;
+  document.getElementById('mpv').textContent=G.maxPts;
+  document.querySelectorAll('#cbtns .cb').forEach((b,i)=>{
+    if(i<G.hintsUsed){b.classList.add('used');b.disabled=true;}
+    else if(i===G.hintsUsed){b.disabled=false;}
+  });
+  document.getElementById('cshown').innerHTML=d.clues.slice(0,G.hintsUsed).map((c,i)=>`<div class="cs"><span class="cn">${i+1}.</span><span>${c}</span></div>`).join('');
+}
+
+function renderTeamAnswers(){
+  document.getElementById('tans').innerHTML=G.teams.map((t,ti)=>`<div class="trow" id="tr${ti}"><div class="tn">${t.name}</div><div class="dbs">${G.opts.map(d=>`<button class="db" data-ti="${ti}" data-d="${d}">${d}</button>`).join('')}</div></div>`).join('');
+  document.querySelectorAll('.db').forEach(b=>b.onclick=()=>lockAns(+b.dataset.ti,b.dataset.d));
+}
+
+function lockAns(ti,dist){
+  if(G.answers[ti])return;G.answers[ti]=dist;
+  const row=document.getElementById('tr'+ti);
+  row.querySelectorAll('.db').forEach(b=>{b.classList.remove('sel');if(b.dataset.d===dist)b.classList.add('sel');else b.classList.add('dim');});
+  const tag=document.createElement('div');tag.className='lktag';
+  tag.innerHTML='<i class="ti ti-check" style="font-size:11px;vertical-align:-1px;" aria-hidden="true"></i> Locked';row.appendChild(tag);
+}
+
+function startTimer(){
+  if(G.timer)clearInterval(G.timer);
+  const el=document.getElementById('tv');
+  G.timer=setInterval(()=>{
+    G.timeLeft--;
+    const m=Math.floor(G.timeLeft/60),s=G.timeLeft%60;
+    el.textContent=m+':'+String(s).padStart(2,'0');
+    const pct=G.timeLeft/G.totalTime;
+    el.className='tv '+(pct>0.5?'tg':pct>0.25?'ta':'tr');
+    if(G.timeLeft<=0){clearInterval(G.timer);endRound();}
+  },1000);
+}
+
+function endRound(){
+  if(G.roundEnded)return;G.roundEnded=true;if(G.timer)clearInterval(G.timer);showResult();
+}
+
+function showResult(){
+  const d=G.deck[G.round];show('scR');
+  document.getElementById('whyLbl').textContent=d.type==='prob'?'Worked solution':'Why this distribution?';
+  document.getElementById('resAns').textContent=d.ans;
+  document.getElementById('resClues').innerHTML=d.clues.map(c=>`<div class="rclue"><div class="rdot"></div><span>${c}</span></div>`).join('');
+  document.getElementById('resExpl').textContent=d.expl;
+  const cards=G.teams.map((t,i)=>{
+    const ans=G.answers[i]||null,ok=ans===d.ans,pts=ok?G.maxPts:0;
+    G.scores[i]+=pts;if(ok)G.corrects[i]++;
+    return{name:t.name,ans:ans||'—',ok,pts,total:G.scores[i]};
+  });
+  document.getElementById('resCards').innerHTML=cards.map(c=>`<div class="rcard ${c.ok?'ok':'fail'}"><div class="rc-nm">${c.name}</div><div class="rc-ans">${c.ans}</div><div class="rc-pt${c.pts>0?' g':''}">${c.pts>0?'+'+c.pts:'0'}</div><div class="rc-tot">Total: ${c.total}</div></div>`).join('');
+  const isLast=G.round===G.deck.length-1;
+  const nb=document.getElementById('nextBtn');
+  nb.innerHTML=isLast?'View final scores <i class="ti ti-trophy" style="font-size:14px;vertical-align:-2px;margin-left:4px;" aria-hidden="true"></i>':'Next round <i class="ti ti-arrow-right" style="font-size:14px;vertical-align:-2px;" aria-hidden="true"></i>';
+  nb.onclick=isLast?showFinal:()=>{G.round++;startRound();};
+}
+
+function showFinal(){
+  show('scF');
+  const ranked=G.teams.map((t,i)=>({name:t.name,members:t.members,score:G.scores[i],correct:G.corrects[i]})).sort((a,b)=>b.score-a.score);
+  const solo=G.mode==='solo';
+  const when=new Date().toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'});
+  const R=(a,b)=>`<div class="row"><span>${a}</span><b>${b}</b></div>`;
+  const esc=x=>String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  document.getElementById('partCard').innerHTML='<h3>Participation record</h3>'+
+    (solo?R('Student name',esc(G.student.name))+R('Roll No.',esc(G.student.roll)):'')+
+    R('Batch',esc(G.student.batch))+R('Mode',solo?'Solo':'Team ('+G.teams.length+' teams)')+
+    R('Rounds played',G.deck.length)+R('Date &amp; time',when);
+  document.getElementById('lbTable').style.display=solo?'none':'table';
+  document.getElementById('lbLbl').style.display=solo?'none':'block';
+  const ss=document.getElementById('soloStats');ss.style.display=solo?'grid':'none';
+  if(solo){
+    const sc=G.scores[0],co=G.corrects[0],n=G.deck.length;
+    document.getElementById('winTxt').textContent=G.teams[0].name+', you scored '+sc+' points!';
+    ss.innerHTML=`<div class="stat"><b>${sc}</b><span>Points</span></div><div class="stat"><b>${co}/${n}</b><span>Correct</span></div><div class="stat"><b>${Math.round(co/n*100)}%</b><span>Accuracy</span></div>`;
+  }else{
+    document.getElementById('winTxt').textContent=ranked[0].name+' wins with '+ranked[0].score+' points!';
+  }
+  document.getElementById('lbB').innerHTML=ranked.map((r,i)=>`<tr class="${i===0?'first':''}"><td class="${i===0?'r1':i===1?'r2':''}">${RANKS[i]}</td><td>${r.name}<div class="memtxt">${(r.members||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}</div></td><td style="font-weight:${i===0?700:500}">${r.score}</td><td>${r.correct}/${G.deck.length}</td></tr>`).join('');
+}
+
+function lgam(n){let s=0;for(let i=2;i<=n;i++)s+=Math.log(i);return s;}
+function binP(n,p,k){return Math.exp(lgam(n)-lgam(k)-lgam(n-k)+k*Math.log(p)+(n-k)*Math.log(1-p));}
+function poiP(l,k){return Math.exp(-l+k*Math.log(l)-lgam(k));}
+function normP(x,m,s){return Math.exp(-0.5*((x-m)/s)**2)/(s*Math.sqrt(2*Math.PI));}
+
+function renderProbChart(d){
+  const c=d.chart,lo=c.lo===undefined?null:c.lo,hi=c.hi===undefined?null:c.hi;
+  const BLUE='#1a56d699',HI='#d97706cc';
+  const tickF={font:{size:14}},ttlF={size:14};
+  if(c.d==='binom'||c.d==='pois'){
+    const kmax=c.d==='binom'?c.n:Math.ceil(c.lam+4*Math.sqrt(c.lam)+3);
+    const ks=[],ps=[];
+    for(let k=0;k<=kmax;k++){ks.push(String(k));ps.push(c.d==='binom'?binP(c.n,c.p,k):poiP(c.lam,k));}
+    const cols=ks.map((_,k)=>(lo!==null&&k>=lo&&k<=hi)?HI:BLUE);
+    G.chart=new Chart(document.getElementById('ch'),{type:'bar',
+      data:{labels:ks,datasets:[{data:ps,backgroundColor:cols,borderColor:'#1a56d6',borderWidth:1,borderRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>c.xLbl+': '+i[0].label,label:i=>'P = '+i.raw.toFixed(4)}}},
+        scales:{x:{ticks:tickF,grid:{display:false},title:{display:true,text:c.xLbl,font:ttlF}},y:{ticks:tickF,beginAtZero:true,grid:{color:'rgba(0,0,0,.05)'},title:{display:true,text:'Probability',font:ttlF}}}}});
+    return;
+  }
+  let xmin,xmax,f;
+  if(c.d==='norm'){xmin=c.mu-4*c.sd;xmax=c.mu+4*c.sd;f=x=>normP(x,c.mu,c.sd);}
+  else if(c.d==='exp'){xmin=0;xmax=c.mean*5;f=x=>x<0?0:Math.exp(-x/c.mean)/c.mean;}
+  else{const pad=(c.b-c.a)*0.15;xmin=c.a-pad;xmax=c.b+pad;f=x=>(x>=c.a&&x<=c.b)?1/(c.b-c.a):0;}
+  let curve=[];
+  if(c.d==='unif'){const h=1/(c.b-c.a);curve=[{x:xmin,y:0},{x:c.a,y:0},{x:c.a,y:h},{x:c.b,y:h},{x:c.b,y:0},{x:xmax,y:0}];}
+  else{for(let i=0;i<=160;i++){const x=xmin+(xmax-xmin)*i/160;curve.push({x:x,y:f(x)});}}
+  const ds=[{data:curve,borderColor:'#1a56d6',borderWidth:2,pointRadius:0,fill:false,tension:0,order:2}];
+  if(lo!==null){
+    const L=Math.max(lo,xmin),H=Math.min(hi,xmax);let sh=[];
+    if(c.d==='unif'){const h=1/(c.b-c.a);sh=[{x:L,y:0},{x:L,y:h},{x:H,y:h},{x:H,y:0}];}
+    else{sh.push({x:L,y:0});for(let i=0;i<=160;i++){const x=xmin+(xmax-xmin)*i/160;if(x>L&&x<H)sh.push({x:x,y:f(x)});}sh.push({x:H,y:f(H)});sh.push({x:H,y:0});}
+    ds.push({data:sh,borderColor:'transparent',backgroundColor:HI,pointRadius:0,fill:'origin',order:1});
+  }
+  G.chart=new Chart(document.getElementById('ch'),{type:'line',data:{datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false},tooltip:{enabled:false}},
+      scales:{x:{type:'linear',min:xmin,max:xmax,ticks:tickF,grid:{display:false},title:{display:true,text:c.xLbl,font:ttlF}},
+              y:{beginAtZero:true,ticks:{display:false},grid:{color:'rgba(0,0,0,.05)'},title:{display:true,text:'Density',font:ttlF}}}}});
+}
+
+function renderChart(d){
+  if(G.chart){G.chart.destroy();G.chart=null;}
+  if(d.type==='prob'){renderProbChart(d);return;}
+  G.chart=new Chart(document.getElementById('ch'),{
+    type:'bar',
+    data:{labels:d.labels,datasets:[{data:d.freqs,backgroundColor:'#1a56d699',borderColor:'#1a56d6',borderWidth:1,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>d.xLbl+': '+i[0].label,label:i=>'Frequency: '+i.raw}}},
+      scales:{
+        x:{ticks:{font:{size:14},autoSkip:false,maxRotation:30},grid:{display:false},title:{display:true,text:d.xLbl,font:{size:13}}},
+        y:{ticks:{font:{size:13}},grid:{color:'rgba(0,0,0,.05)'},title:{display:true,text:'Frequency',font:{size:13}},beginAtZero:true}
+      }
+    }
+  });
+}
+
+initSetup();
+</script>
+</body>
+</html>
